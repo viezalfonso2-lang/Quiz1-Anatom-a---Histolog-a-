@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco de Preguntas de Histología y Anatomía - Examen Médico</title>
+    <!-- Tailwind CSS para un diseño moderno y responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fuentes de Google: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .custom-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <!-- Header / Barra Superior -->
+    <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-800 p-2 rounded-xl text-indigo-300">
+                    <i class="fa-solid fa-brain text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg tracking-wide">MedQuiz Pro</h1>
+                    <p class="text-xs text-indigo-200">Evaluación Avanzada de Histología y Anatomía</p>
+                </div>
+            </div>
+            <div id="user-badge" class="hidden text-xs bg-indigo-800 px-3 py-1.5 rounded-full border border-indigo-700 flex items-center space-x-2">
+                <i class="fa-solid fa-user-doctor text-indigo-300"></i>
+                <span id="badge-name" class="font-medium text-white"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <main class="max-w-4xl mx-auto px-4 py-8 flex-grow w-full">
+
+        <!-- VISTA 1: Pantalla de Registro -->
+        <section id="view-register" class="bg-white rounded-2xl custom-shadow p-6 md:p-10 border border-slate-100 max-w-xl mx-auto mt-6">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl mb-4 text-2xl">
+                    <i class="fa-solid fa-stethoscope"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900">Banco de Exámenes Médicos</h2>
+                <p class="text-sm text-slate-500 mt-2">Evaluación integral de 50 preguntas de selección simple (A-E) enfocada en estudiantes de medicina y médicos generales.</p>
+            </div>
+
+            <form id="form-register" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="input-name">Nombre y Apellido *</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                        <input type="text" id="input-name" required placeholder="Ej. Dr. Carlos Mendoza" 
+                            class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white text-sm transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="input-id">Cédula de Identidad o Correo *</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                            <i class="fa-solid fa-id-card"></i>
+                        </span>
+                        <input type="text" id="input-id" required placeholder="Ej. V-12345678 o correo@hospital.com" 
+                            class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white text-sm transition">
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-800 flex items-start space-x-3">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5 text-base"></i>
+                    <div>
+                        <span class="font-bold block mb-0.5">Indicaciones del Examen:</span>
+                        El cuestionario consta de 50 preguntas de opción múltiple (A a la E). Al finalizar, obtendrás tu puntaje automático, calificación y retroalimentación detallada de cada reactivo.
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 px-6 rounded-xl transition duration-200 shadow-lg shadow-indigo-200 flex items-center justify-center space-x-2">
+                    <span>Comenzar Examen</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+        </section>
+
+        <!-- VISTA 2: Pantalla del Quiz -->
+        <section id="view-quiz" class="hidden space-y-6">
+            <!-- Barra de Progreso y Timer -->
+            <div class="bg-white rounded-2xl p-4 md:p-6 custom-shadow border border-slate-100 flex flex-wrap justify-between items-center gap-4 sticky top-20 z-40">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-indigo-50 text-indigo-600 p-2.5 rounded-xl font-bold text-sm">
+                        Pregunta <span id="current-q-num">1</span>/50
+                    </div>
+                    <div class="hidden sm:block w-48 bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                        <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: 2%;"></div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-xs text-slate-500 font-medium">
+                        Respondidas: <span id="answered-count" class="font-bold text-indigo-600">0</span>/50
+                    </div>
+                    <div class="bg-slate-100 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 flex items-center space-x-1.5">
+                        <i class="fa-regular fa-clock text-indigo-600"></i>
+                        <span id="timer">00:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta de Pregunta Activa -->
+            <div id="question-container" class="bg-white rounded-2xl custom-shadow p-6 md:p-8 border border-slate-100">
+                <!-- Se inyecta dinámicamente vía JavaScript -->
+            </div>
+
+            <!-- Botones de Navegación -->
+            <div class="flex justify-between items-center pt-2">
+                <button id="btn-prev" onclick="prevQuestion()" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold px-5 py-3 rounded-xl transition text-sm flex items-center space-x-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Anterior</span>
+                </button>
+
+                <div class="flex space-x-2">
+                    <button id="btn-next" onclick="nextQuestion()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl transition text-sm shadow-md shadow-indigo-100 flex items-center space-x-2">
+                        <span>Siguiente</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                    <button id="btn-submit" onclick="confirmSubmit()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3 rounded-xl transition text-sm shadow-md shadow-emerald-100 flex items-center space-x-2">
+                        <i class="fa-solid fa-check-double"></i>
+                        <span>Finalizar y Enviar</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Paleta rápida de navegación por preguntas -->
+            <div class="bg-white rounded-2xl p-4 md:p-6 custom-shadow border border-slate-100">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Navegación Rápida de Preguntas</p>
+                <div id="question-grid" class="grid grid-cols-10 gap-1.5 sm:gap-2">
+                    <!-- Se inyectan botones del 1 al 50 -->
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA 3: Pantalla de Resultados -->
+        <section id="view-result" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl custom-shadow p-6 md:p-10 border border-slate-100 text-center max-w-2xl mx-auto">
+                <div id="result-icon-container" class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-4 text-3xl shadow-lg">
+                    <!-- Dinámico -->
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900">¡Examen Finalizado!</h2>
+                <p id="result-candidate-info" class="text-sm text-slate-500 mt-1"></p>
+
+                <div class="my-6 p-6 bg-slate-50 rounded-2xl border border-slate-100 flex justify-around items-center">
+                    <div>
+                        <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Puntuación</p>
+                        <p id="score-fraction" class="text-3xl font-extrabold text-indigo-600 mt-1">0/50</p>
+                    </div>
+                    <div class="h-10 w-px bg-slate-200"></div>
+                    <div>
+                        <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Porcentaje</p>
+                        <p id="score-percentage" class="text-3xl font-extrabold text-slate-800 mt-1">0%</p>
+                    </div>
+                    <div class="h-10 w-px bg-slate-200"></div>
+                    <div>
+                        <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Calificación</p>
+                        <p id="score-qualitative" class="text-xl font-bold mt-1 text-emerald-600">Aprobado</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-6 rounded-xl transition text-sm flex items-center space-x-2 shadow">
+                        <i class="fa-solid fa-print"></i>
+                        <span>Imprimir / Guardar Resultado</span>
+                    </button>
+                    <button onclick="restartQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition text-sm flex items-center space-x-2 shadow shadow-indigo-100">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Intentar Nuevamente</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Desglose detallado de respuestas -->
+            <div class="bg-white rounded-2xl p-6 md:p-8 custom-shadow border border-slate-100 space-y-6">
+                <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                    <h3 class="font-bold text-lg text-slate-900"><i class="fa-solid fa-clipboard-list text-indigo-600 mr-2"></i>Desglose y Retroalimentación Detallada</h3>
+                    <span class="text-xs text-slate-500 font-medium">Clave y Explicación de las 50 preguntas</span>
+                </div>
+                <div id="detailed-review" class="space-y-6">
+                    <!-- Inyectado por JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500">
+        <p>Banco de Preguntas Interactivo de Histología y Anatomía Humana &copy; 2026. Diseñado para Educación Médica Continua.</p>
+    </footer>
+
+    <!-- Modal de confirmación para enviar -->
+    <div id="modal-confirm" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
+            <div class="flex items-center space-x-3 text-amber-600">
+                <i class="fa-solid fa-circle-exclamation text-2xl"></i>
+                <h3 class="font-bold text-lg text-slate-900">¿Deseas enviar el examen?</h3>
+            </div>
+            <p class="text-sm text-slate-600">Has respondido <span id="modal-answered-count" class="font-bold text-slate-900">0</span> de 50 preguntas. Una vez enviado no podrás modificar tus respuestas.</p>
+            <div class="flex justify-end space-x-3 pt-2">
+                <button onclick="closeSubmitModal()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50 transition">Revisar respuestas</button>
+                <button onclick="submitExam()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold transition shadow-md shadow-emerald-100">Sí, finalizar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script principal con el banco de 50 preguntas y la lógica de la app -->
+    <script>
+        // Banco completo de 50 preguntas de Histología y Anatomía con opciones A-E, respuesta y explicación
+        const questionsData = [
+            {
+                id: 1,
+                category: "Histología General",
+                question: "¿Cuál de los siguientes tipos de epitelio recubre la superficie interna de los vasos sanguíneos y linfáticos (endotelio)?",
+                options: {
+                    A: "Epitelio plano estratificado no queratinizado",
+                    B: "Epitelio cúbico simple",
+                    C: "Epitelio plano simple",
+                    D: "Epitelio cilíndrico pseudoestratificado",
+                    E: "Epitelio cilíndrico simple con microvellosidades"
+                },
+                correct: "C",
+                explanation: "El endotelio que tapiza los vasos sanguíneos y linfáticos está constituido por un epitelio plano simple, el cual facilita el intercambio y reduce la fricción del flujo sanguíneo."
+            },
+            {
+                id: 2,
+                category: "Anatomía Abdominal",
+                question: "¿Cuál es la principal estructura anatómica que marca el límite posterior del vestíbulo de la bolsa omental (transcavidad de los epiplones)?",
+                options: {
+                    A: "El ligamento hepatoduodenal",
+                    B: "La vena cava inferior y la aorta abdominal posterior",
+                    C: "El lóbulo caudado del hígado",
+                    D: "La curvatura menor del estómago",
+                    E: "El páncreas"
+                },
+                correct: "B",
+                explanation: "El vestíbulo de la bolsa omental está limitado posteriormente por el peritoneo parietal que cubre la vena cava inferior y la aorta abdominal."
+            },
+            {
+                id: 3,
+                category: "Histología del Tejido Óseo",
+                question: "¿Qué células del tejido óseo se originan a partir de la fusión de monocitos/macrófagos y se encargan de la resorción ósea?",
+                options: {
+                    A: "Osteoblastos",
+                    B: "Osteocitos",
+                    C: "Células osteoprogenitoras",
+                    D: "Osteoclastos",
+                    E: "Condroblastos"
+                },
+                correct: "D",
+                explanation: "Los osteoclastos son células multinucleadas grandes pertenecientes al sistema fagocítico mononuclear, especializadas en la resorción y remodelación de la matriz ósea."
+            },
+            {
+                id: 4,
+                category: "Neuroanatomía",
+                question: "El cuerpo estriado (neostriado) del sistema nervioso central está conformado anatómica y funcionalmente por la asociación de:",
+                options: {
+                    A: "Tálamo y núcleo lenticular",
+                    B: "Putamen y globo pálido",
+                    C: "Núcleo caudado y putamen",
+                    D: "Amígdala y claustro",
+                    E: "Sustancia negra y núcleo rojo"
+                },
+                correct: "C",
+                explanation: "El cuerpo estriado funcional y filogenéticamente más reciente (neostriado) está integrado por el núcleo caudado y el putamen."
+            },
+            {
+                id: 5,
+                category: "Histología del Sistema Nervioso",
+                question: "¿Qué células gliales son las principales responsables de la formación de la vaina de mielina en el Sistema Nervioso Central (SNC)?",
+                options: {
+                    A: "Astrocitos fibrosos",
+                    B: "Células de Schwann",
+                    C: "Microglía",
+                    D: "Oligodendrocitos",
+                    E: "Ependimocitos"
+                },
+                correct: "D",
+                explanation: "En el SNC, los oligodendrocitos emiten prolongaciones que envuelven múltiples axones formando la vaina de mielina. En el SNP, esta función la realizan las células de Schwann."
+            },
+            {
+                id: 6,
+                category: "Anatomía Cardiovascular",
+                question: "¿En qué estructura anatómica se localiza habitualmente el nodo sinoatrial (marcapasos natural del corazón)?",
+                options: {
+                    A: "En el tabique interventricular membranoso",
+                    B: "En la unión de la vena cava superior con la aurícula derecha",
+                    C: "En el vértice del triángulo de Koch",
+                    D: "En la base del cono arterial del ventrículo derecho",
+                    E: "En el seno coronario"
+                },
+                correct: "B",
+                explanation: "El nodo sinoatrial (de Keith y Flack) se encuentra subepicárdicamente en la región anterolateral alta de la aurícula derecha, cerca del desembocadura de la vena cava superior."
+            },
+            {
+                id: 7,
+                category: "Histología del Tejido Sanguíneo",
+                question: "De los leucocitos circulantes, ¿cuál es el tipo celular más abundante en la sangre periférica de un adulto sano?",
+                options: {
+                    A: "Eosinófilos",
+                    B: "Linfocitos",
+                    C: "Neutrófilos",
+                    D: "Basófilos",
+                    E: "Monocitos"
+                },
+                correct: "C",
+                explanation: "Los neutrófilos representan entre el 50% y el 70% del recuento total de leucocitos en la sangre periférica, actuando como primera línea de defensa contra infecciones bacterianas."
+            },
+            {
+                id: 8,
+                category: "Anatomía del Sistema Respiratorio",
+                question: "¿Cuál es el bronquio principal que presenta una trayectoria más vertical, es de mayor calibre y más corto, siendo el sitio más frecuente de aspiración de cuerpos extraños?",
+                options: {
+                    A: "Bronquio principal izquierdo",
+                    B: "Bronquio lobular superior derecho",
+                    C: "Bronquio principal derecho",
+                    D: "Bronquio intermediario",
+                    E: "Bronquio lingular"
+                },
+                correct: "C",
+                explanation: "El bronquio principal derecho es más vertical, ancho y corto que el izquierdo, lo que facilita que los cuerpos extraños inhalados penetren habitualmente hacia el pulmón derecho."
+            },
+            {
+                id: 9,
+                category: "Histología del Sistema Digestivo",
+                question: "¿Qué células de las glándulas fúndicas gástricas son las encargadas de secretar factor intrínseco y ácido clorhídrico?",
+                options: {
+                    A: "Células principales o zifógenas",
+                    B: "Células mucosas del cuello",
+                    C: "Células parietales u oxínticas",
+                    D: "Células enteroendocrinas G",
+                    E: "Células madre gástricas"
+                },
+                correct: "C",
+                explanation: "Las células parietales (oxínticas) son grandes, acidófilas y productoras de ácido clorhídrico y factor intrínseco (indispensable para la absorción de vitamina B12 en el íleon)."
+            },
+            {
+                id: 10,
+                category: "Anatomía del Sistema Reproductor Masculino",
+                question: "¿A través de qué estructura anatómica abandonan los espermatozoides los testículos para dirigirse al epidídimo?",
+                options: {
+                    A: "Conducto deferente",
+                    B: "Túbulos seminíferos contorneados",
+                    C: "Conductillos eferentes",
+                    D: "Red testicular (rete testis)",
+                    E: "Ampolla del conducto deferente"
+                },
+                correct: "C",
+                explanation: "Los espermatozoides pasan de los túbulos seminíferos rectos a la red testicular (rete testis), desde donde emergen entre 10 a 20 conductillos eferentes que los transportan hacia la cabeza del epidídimo."
+            },
+            {
+                id: 11,
+                category: "Histología del Tejido Muscular",
+                question: "¿Qué elemento ultraestructural de la fibra muscular estriada es el principal encargado de almacenar y liberar iones de calcio (Ca2+) durante la contracción?",
+                options: {
+                    A: "Túbulos T (transversos)",
+                    B: "Retículo sarcoplásmico",
+                    C: "Sarcolema",
+                    D: "Línea Z",
+                    E: "Mitocondrias (sarcosomas)"
+                },
+                correct: "B",
+                explanation: "El retículo sarcoplásmico es el retículo endoplásmico liso especializado de las células musculares, cuyo papel fundamental es el secuestro, almacenamiento y liberación regulada de calcio."
+            },
+            {
+                id: 12,
+                category: "Anatomía del Sistema Urinario",
+                question: "¿Cuál es la relación anatómica posterior más importante que comparten tanto el riñón derecho como el riñón izquierdo en su porción superior?",
+                options: {
+                    A: "El músculo psoas mayor",
+                    B: "El músculo cuadrado lumbar",
+                    C: "El diafragma y la 12ª costilla (receso costofrénico)",
+                    D: "El colon ascendente y descendente",
+                    E: "La arteria mesentérica superior"
+                },
+                correct: "C",
+                explanation: "En sus polos superiores, ambos riñones se relacionan posteriormente con el diafragma, el cual los separa de la cavidad pleural (a través del receso costofrénico) y de las costillas 11 y 12."
+            },
+            {
+                id: 13,
+                category: "Histología del Sistema Linfático",
+                question: "¿En qué región anatómica del ganglio linfático se localizan predominantemente los linfocitos T?",
+                options: {
+                    A: "Corteza superficial (folicular)",
+                    B: "Paracorteza (zona cortical profunda)",
+                    C: "Senos subcapsulares",
+                    D: "Cordones medulares",
+                    E: "Senos medulares"
+                },
+                correct: "B",
+                explanation: "La paracorteza del ganglio linfático es una zona timodependiente poblada mayoritariamente por linfocitos T y vénulas de endotelio alto (HEV)."
+            },
+            {
+                id: 14,
+                category: "Anatomía de Cabeza y Cuello",
+                question: "¿Qué nervio craneal inerva los músculos de la masticación (masetero, temporal, pterigoideos)?",
+                options: {
+                    A: "Nervio facial (VII par)",
+                    B: "Nervio trigémino (V par, rama mandibular V3)",
+                    C: "Nervio glosofaríngeo (IX par)",
+                    D: "Nervio hipogloso (XII par)",
+                    E: "Nervio accesorio (XI par)"
+                },
+                correct: "B",
+                explanation: "Los músculos masticatorios derivan del primer arco branquial y reciben inervación motora exclusiva del nervio trigémino, específicamente a través del nervio mandibular (V3)."
+            },
+            {
+                id: 15,
+                category: "Histología del Tejido Cartilaginoso",
+                question: "¿Cuál es el tipo de cartílago articular que recubre las superficies óseas de las articulaciones sinoviales?",
+                options: {
+                    A: "Cartílago elástico",
+                    B: "Fibrocartílago",
+                    C: "Cartílago hialino",
+                    D: "Cartílago vesicular",
+                    E: "Cartílago reticular"
+                },
+                correct: "C",
+                explanation: "El cartílago articular es cartílago hialino especializado que carece de pericondrio, permitiendo una superficie de fricción extremadamente baja y resistente a la compresión."
+            },
+            {
+                id: 16,
+                category: "Anatomía del Sistema Nervioso Central",
+                question: "¿A través de qué foramen se comunican los ventrículos laterales con el tercer ventrículo en el cerebro humano?",
+                options: {
+                    A: "Acueducto de Silvio (cerebral)",
+                    B: "Forámenes de Luschka",
+                    C: "Foramen de Magendie",
+                    D: "Forámenes interventriculares (de Monro)",
+                    E: "Foramen magno"
+                },
+                correct: "D",
+                explanation: "Los ventrículos laterales drenan líquido cefalorraquídeo hacia el tercer ventrículo a través de los forámenes interventriculares o de Monro."
+            },
+            {
+                id: 17,
+                category: "Histología del Sistema Endocrino",
+                question: "¿Qué células de los islotes pancreáticos (de Langerhans) producen la hormona insulina?",
+                options: {
+                    A: "Células Alfa (α)",
+                    B: "Células Beta (β)",
+                    C: "Células Delta (δ)",
+                    D: "Células F (PP)",
+                    E: "Células G"
+                },
+                correct: "B",
+                explanation: "Las células beta son las más abundantes en los islotes de Langerhans y son responsables de la síntesis y secreción de insulina para la regulación metabólica de la glucosa."
+            },
+            {
+                id: 18,
+                category: "Anatomía del Sistema Circulatorio",
+                question: "¿Cuál es el vaso sanguíneo que drena la mayor parte de la sangre venosa del corazón directamente hacia la aurícula derecha?",
+                options: {
+                    A: "Vena cardíaca magna",
+                    B: "Vena cava inferior",
+                    C: "Seno coronario",
+                    D: "Venas anteriores del ventrículo derecho",
+                    E: "Venas de Tebesio"
+                },
+                correct: "C",
+                explanation: "El seno coronario es el colector venoso principal del corazón; se sitúa en la parte posterior del surco coronario y desemboca en la aurícula derecha."
+            },
+            {
+                id: 19,
+                category: "Histología del Sistema Tegumentario",
+                question: "¿Cuál es la capa de la epidermis cutánea que contiene queratinocitos unidos por numerosos desmosomas y gránulos de queratohialina en sus capas altas?",
+                options: {
+                    A: "Estrato basal (germinativo)",
+                    B: "Estrato espinoso",
+                    C: "Estrato lúcido",
+                    D: "Estrato córneo",
+                    E: "Estrato papilar"
+                },
+                correct: "B",
+                explanation: "El estrato espinoso se caracteriza por células poliédricas con prominentes proyecciones celulares unidas por desmosomas (apariencia espinosa) y síntesis inicial de queratina."
+            },
+            {
+                id: 20,
+                category: "Anatomía del Aparato Locomotor",
+                question: "¿Qué ligamento intracapsular de la articulación de la rodilla se inserta en el área intercondílea anterior de la tibia y evita el desplazamiento anterior de la misma?",
+                options: {
+                    A: "Ligamento cruzado posterior (LCP)",
+                    B: "Ligamento colateral tibial",
+                    C: "Ligamento cruzado anterior (LCA)",
+                    D: "Ligamento colateral peroneo",
+                    E: "Ligamento rotuliano"
+                },
+                correct: "C",
+                explanation: "El ligamento cruzado anterior (LCA) se extiende desde la superficie medial del cóndilo femoral lateral hasta el área intercondílea anterior de la tibia, estabilizando la rodilla ante la traslación anterior."
+            },
+            {
+                id: 21,
+                category: "Histología del Sistema Urinario",
+                question: "¿Qué estructura histológica forma la 'barrera de filtración glomerular' en el corpúsculo renal?",
+                options: {
+                    A: "Endotelio fenestrado, membrana basal glomerular y podocitos",
+                    B: "Células mesangiales, epitelio parietal y cápsula de Bowman",
+                    C: "Células de la mácula densa y arteriola aferente",
+                    D: "Túbulo contorneado proximal y asa de Henle",
+                    E: "Urotelio y lámina propia"
+                },
+                correct: "A",
+                explanation: "La barrera de filtración renal está compuesta por el endotelio capilar fenestrado, la membrana basal glomerular compartida y las hendiduras de filtración formadas por los pedicelos de los podocitos."
+            },
+            {
+                id: 22,
+                category: "Anatomía del Sistema Digestivo",
+                question: "¿Cuál es la porción del intestino delgado que se caracteriza histológica y anatómicamente por la presencia de glándulas de Brunner en su submucosa?",
+                options: {
+                    A: "Yeyuno",
+                    B: "Íleon",
+                    C: "Duodeno",
+                    D: "Ciego",
+                    E: "Colon transverso"
+                },
+                correct: "C",
+                explanation: "Las glándulas duodenales (de Brunner) son glándulas submucosas productoras de moco alcalino y se encuentran de forma exclusiva en el duodeno para neutralizar el quimo ácido."
+            },
+            {
+                id: 23,
+                category: "Histología del Tejido Conectivo",
+                question: "¿Qué célula residente del tejido conectivo es rica en metacromasia y almacena histamina, heparina y leucotrienos en sus gránulos?",
+                options: {
+                    A: "Fibroblasto",
+                    B: "Macrófago",
+                    C: "Mastocito (célula cebada)",
+                    D: "Adipocito unilocular",
+                    E: "Plasmocito"
+                },
+                correct: "C",
+                explanation: "Los mastocitos desempeñan un papel clave en las reacciones alérgicas inmediatas y la inflamación mediante la liberación de mediadores vasoactivos almacenados en sus gránulos."
+            },
+            {
+                id: 24,
+                category: "Anatomía del Sistema Nervioso Periférico",
+                question: "¿Cuál es el nervio craneal encargado de la inervación parasimpática de las vísceras torácicas y abdominales hasta los dos tercios izquierdos del colon transverso?",
+                options: {
+                    A: "Nervio facial (VII)",
+                    B: "Nervio trigémino (V)",
+                    C: "Nervio vago (X par craneal)",
+                    D: "Nervio accesorio (XI)",
+                    E: "Nervio hipogloso (XII)"
+                },
+                correct: "C",
+                explanation: "El nervio vago (neumogástrico o X par) proporciona el componente parasimpático principal para las estructuras del tórax y el abdomen superior hasta el ángulo esplénico del colon."
+            },
+            {
+                id: 25,
+                category: "Histología del Ojo",
+                question: "¿Qué capa de la retina contiene los fotorreceptores especializados (conos y bastones)?",
+                options: {
+                    A: "Capa de células ganglionares",
+                    B: "Capa plexiforme interna",
+                    C: "Capa nuclear externa (de núcleos de fotorreceptores)",
+                    D: "Capa de segmentos externos de conos y bastones (adyacente al epitelio pigmentario)",
+                    E: "Membrana limitante interna"
+                },
+                correct: "D",
+                explanation: "Los segmentos externos de los conos y bastones, donde reside la fototransducción, se ubican en la capa más externa de la retina neural, en estrecho contacto con el epitelio pigmentario retiniano."
+            },
+            {
+                id: 26,
+                category: "Anatomía Vascular",
+                question: "¿Cuáles son las ramas principales que forman el tronco celíaco en la cavidad abdominal?",
+                options: {
+                    A: "Arteria mesentérica superior, renal y cólica derecha",
+                    B: "Arteria gástrica izquierda, esplénica y hepática común",
+                    C: "Arteria pancreatoduodenal, cólica media e ileocólica",
+                    D: "Arterias gonadales, lumbares y frénicas inferiores",
+                    E: "Arteria hepática propia, gástrica derecha y mesentérica inferior"
+                },
+                correct: "B",
+                explanation: "El tronco celíaco es la primera rama impar de la aorta abdominal y se divide trifurcándose en la arteria gástrica izquierda, la arteria esplénica y la arteria hepática común."
+            },
+            {
+                id: 27,
+                category: "Histología del Sistema Reproductor Femenino",
+                question: "¿Cómo se denomina el estadio folicular ovárico caracterizado por la presencia de una cavidad llena de líquido folicular (antro)?",
+                options: {
+                    A: "Folículo primordial",
+                    B: "Folículo primario unilaminar",
+                    C: "Folículo secundario (antral)",
+                    D: "Folículo maduro (de Graaf)",
+                    E: "Cuerpo lúteo"
+                },
+                correct: "C",
+                explanation: "El folículo secundario o antral se distingue morfológicamente por la aparición de espacios llenos de líquido (liquor folliculi) que confluyen para formar una cavidad única llamada antro."
+            },
+            {
+                id: 28,
+                category: "Anatomía del Sistema Linfático",
+                question: "¿Dónde desemboca habitualmente el conducto torácico (principal colector linfático del cuerpo)?",
+                options: {
+                    A: "En la vena yugular externa derecha",
+                    B: "En el ángulo venoso yugulosubclavio izquierdo",
+                    C: "Directamente en la vena cava superior",
+                    D: "En la vena ácigos",
+                    E: "En la vena subclavia derecha"
+                },
+                correct: "B",
+                explanation: "El conducto torácico asciende por el tórax y drena su contenido linfático en el ángulo venoso formado por la unión de la vena yugular interna y la vena subclavia izquierdas."
+            },
+            {
+                id: 29,
+                category: "Histología del Sistema Endocrino",
+                question: "¿Qué hormonas son sintetizadas y secretadas por la neurohipófisis (lóbulo posterior de la hipófisis)?",
+                options: {
+                    A: "GH (somatotropina) y prolactina",
+                    B: "TSH, ACTH, FSH y LH",
+                    C: "Oxitocina y hormona antidiurética (ADH / vasopresina)",
+                    D: "Melatonina y calcitonina",
+                    E: "T3 y T4 libre"
+                },
+                correct: "C",
+                explanation: "La neurohipófisis no sintetiza hormonas; almacena y libera oxitocina y vasopresina (ADH), las cuales son producidas por los cuerpos celulares de los núcleos supraóptico y paraventricular del hipotálamo."
+            },
+            {
+                id: 30,
+                category: "Anatomía del Sistema Musculoesquelético",
+                question: "¿Qué músculos forman el denominado manguito rotador en la articulación del hombro?",
+                options: {
+                    A: "Pectoral mayor, dorsal ancho, redondo mayor y coracobraquial",
+                    B: "Deltoides, redondo menor, pectoral menor y subclavio",
+                    C: "Supraespinoso, infraespinoso, redondo menor y subescapular",
+                    D: "Bíceps braquial, tríceps braquial, braquial y braquiorradial",
+                    E: "Trapecio, romboides, elevador de la escápula y serrato anterior"
+                },
+                correct: "C",
+                explanation: "El manguito rotador está integrado por cuatro músculos (SITS): supraespinoso, infraespinoso, redondo menor y subescapular, cuyos tendones estabilizan la cabeza humeral en la cavidad glenoidea."
+            },
+            {
+                id: 31,
+                category: "Histología del Aparato Respiratorio",
+                question: "El epitelio respiratorio clásico que recubre las vías aéreas de conducción (tráquea y bronquios principales) se clasifica como:",
+                options: {
+                    A: "Epitelio plano estratificado queratinizado",
+                    B: "Epitelio cilíndrico simple ciliado con células caliciformes",
+                    C: "Epitelio cilíndrico pseudoestratificado ciliado con células caliciformes",
+                    D: "Epitelio cúbico estratificado",
+                    E: "Epitelio de transición (urotelio)"
+                },
+                correct: "C",
+                explanation: "Las vías aéreas de conducción están tapizadas por epitelio cilíndrico pseudoestratificado ciliado con abundantes células caliciformes y células en cepillo."
+            },
+            {
+                id: 32,
+                category: "Anatomía Cardiotorácica",
+                question: "¿Qué estructura anatómica divide el mediastino en sus porciones superior e inferior?",
+                options: {
+                    A: "El plano transverso del tórax (que pasa por el ángulo esternal de Louis y el disco intervertebral T4-T5)",
+                    B: "El diafragma torácico",
+                    C: "El pericardio fibroso",
+                    D: "La bifurcación de la tráquea",
+                    E: "El cayado de la aorta"
+                },
+                correct: "A",
+                explanation: "El plano transverso del tórax, trazado desde el ángulo esternal (de Louis) hasta el borde inferior de la vértebra T4, separa anatómicamente el mediastino superior del inferior."
+            },
+            {
+                id: 33,
+                category: "Histología del Tejido Conectivo Adiposo",
+                question: "¿Cuál es la característica histológica distintiva principal del tejido adiposo pardo (grasa marrón) en comparación con el unilocular blanco?",
+                options: {
+                    A: "Poseer una sola vacuola de grasa grande central",
+                    B: "Contener múltiples gotitas lipídicas pequeñas, alta densidad mitocondrial y termogenina (UCP-1)",
+                    C: "Ausencia completa de vascularización sanguínea",
+                    D: "Encontrarse exclusivamente en el adulto humano sano",
+                    E: "Derivar de la cresta neural y no del mesodermo"
+                },
+                correct: "B",
+                explanation: "El tejido adiposo pardo es multilocular, muy vascularizado y rico en mitocondrias oscuras que expresan la proteína desacoplante 1 (UCP-1), especializada en la producción de calor (termogénesis)."
+            },
+            {
+                id: 34,
+                category: "Anatomía del Sistema Nervioso",
+                question: "¿Qué arterias principales se anastomosan para formar el Polígono de Willis (circulo arterial cerebral) en la base del encéfalo?",
+                options: {
+                    A: "Arteria carótida externa y arteria subclavia",
+                    B: "Arterias carótidas internas y arterias vertebrales (sistema basilar)",
+                    C: "Arteria meníngea media y arteria temporal superficial",
+                    D: "Arteria facial y arteria maxilar",
+                    E: "Arterias comunicantes pulmonares"
+                },
+                correct: "B",
+                explanation: "El polígono de Willis se forma en la base del cerebro por la anastomosis entre las ramas del sistema carótido interno y el sistema vertebrobasilar."
+            },
+            {
+                id: 35,
+                category: "Histología del Sistema Inmune",
+                question: "¿Qué órgano linfoide secundario presenta corpúsculos de Hassall en su médula?",
+                options: {
+                    A: "Ganglio linfático",
+                    B: "Bazo",
+                    C: "Timo",
+                    D: "Amígdala palatina",
+                    E: "Apéndice cecal"
+                },
+                correct: "C",
+                explanation: "Los corpúsculos de Hassall (o corpúsculos tímicos) son estructuras celulares epiteliales degeneradas concéntricas características de la médula del timo."
+            },
+            {
+                id: 36,
+                category: "Anatomía del Abdomen",
+                question: "¿Qué puntos anatómicos de referencia superficial delimitan el denominado 'Punto de McBurney', clásico en la apendicitis aguda?",
+                options: {
+                    A: "En la unión del tercio medio y tercio lateral de una línea trazada entre el ombligo y la espina ilíaca anterosuperior derecha",
+                    B: "En el cruce de la línea biiliaca con el músculo recto abdominal derecho",
+                    C: "En el flanco derecho a nivel de la 10ª costilla",
+                    D: "En la fosa iliaca izquierda sobre el sigmoides",
+                    E: "En el punto medio del ligamento inguinal"
+                },
+                correct: "A",
+                explanation: "El punto de McBurney se ubica clásicamente en la unión del tercio externo con los dos tercios internos de la línea espino-umbilical derecha."
+            },
+            {
+                id: 37,
+                category: "Histología del Sistema Excretor",
+                question: "¿Qué tipo de epitelio tapiza las vías urinarias excretoras desde los cálices renales hasta la vejiga y porción proximal de la uretra (urotelio)?",
+                options: {
+                    A: "Epitelio plano estratificado",
+                    B: "Epitelio de transición (urotelio)",
+                    C: "Epitelio cúbico simple",
+                    D: "Epitelio cilíndrico pseudoestratificado",
+                    E: "Endotelio"
+                },
+                correct: "B",
+                explanation: "El urotelio o epitelio de transición es un epitelio estratificado especializado capaz de adaptarse a los cambios de distensión y volumen de la vejiga urinaria."
+            },
+            {
+                id: 38,
+                category: "Anatomía de Miembros Inferiores",
+                question: "¿Qué nervio principal inerva el compartimento anterior de la pierna (músculos extensores dorsales y tibiales anteriores)?",
+                options: {
+                    A: "Nervio ciático mayor",
+                    B: "Nervio tibial",
+                    C: "Nervio fibular común (peroneo común) y su rama profundo",
+                    D: "Nervio obturador",
+                    E: "Nervio femoral"
+                },
+                correct: "C",
+                explanation: "El nervio fibular común, rama del nervio ciático, emite al nervio fibular profundo para inervar los músculos del compartimento anterior de la pierna."
+            },
+            {
+                id: 39,
+                category: "Histología Cardiovascular",
+                question: "¿Cómo se denominan las uniones intercelulares especializadas que aseguran la adhesión mecánica y la conducción eléctrica sincrónica entre células de músculo cardíaco (cardiomiocitos)?",
+                options: {
+                    A: "Desmosomas simples",
+                    B: "Discos intercalares (bandas escaleriformes)",
+                    C: "Uniones estrechas (zonula occludens)",
+                    D: "Hemidesmosomas basales",
+                    E: "Sinapsis químicas"
+                },
+                correct: "B",
+                explanation: "Los discos intercalares son uniones escaleriformes exclusivas del miocardio que contienen fascia adherens, mácula adherens (desmosomas) y uniones en hendidura (gap junctions)."
+            },
+            {
+                id: 40,
+                category: "Anatomía del Oído",
+                question: "¿Cuál es el huesecillo del oído medio que se encuentra directamente adherido a la membrana timpánica?",
+                options: {
+                    A: "Yunque (incus)",
+                    B: "Estribo (stapes)",
+                    C: "Martillo (malleus)",
+                    D: "Apófisis lenticular",
+                    E: "Promontorio"
+                },
+                correct: "C",
+                explanation: "El mango del martillo está firmemente unido a la membrana timpánica, transmitiendo las vibraciones acústicas hacia el yunque y el estribo."
+            },
+            {
+                id: 41,
+                category: "Histología del Páncreas Exocrino",
+                question: "¿Qué tipo de célula glandular compone fundamentalmente los acinos pancreáticos encargados de secretar enzimas digestivas?",
+                options: {
+                    A: "Célula caliciforme",
+                    B: "Célula serosa piramidal con gránulos de zimógeno",
+                    C: "Célula mucosa cúbica",
+                    D: "Célula endocrina argirófila",
+                    E: "Célula mioepitelial"
+                },
+                correct: "B",
+                explanation: "El páncreas exocrino está formado por acinos de células serosas piramidales que presentan gránulos de zimógeno apicales con proenzimas digestivas."
+            },
+            {
+                id: 42,
+                category: "Anatomía del Sistema Vascular",
+                question: "¿Cuál es la arteria que irriga principalmente las estructuras del intestino anterior (estómago, duodeno proximal, hígado y páncreas)?",
+                options: {
+                    A: "Tronco celíaco",
+                    B: "Arteria mesentérica superior",
+                    C: "Arteria mesentérica inferior",
+                    D: "Arteria esplénica accesoria",
+                    E: "Arteria cólica derecha"
+                },
+                correct: "A",
+                explanation: "El tronco celíaco es la arteria visceral que irriga el territorio embriológico del intestino anterior."
+            },
+            {
+                id: 43,
+                category: "Histología del Sistema Reproductor Masculino",
+                question: "¿Qué células de soporte ubicadas en el epitelio seminífero testiculares forman la barrera hematotesticular?",
+                options: {
+                    A: "Células de Leydig",
+                    B: "Células de Sertoli",
+                    C: "Espermatogonias tipo A",
+                    D: "Células mioides peritubulares",
+                    E: "Macrófagos testiculares"
+                },
+                correct: "B",
+                explanation: "Las células de Sertoli están unidas entre sí por complejos de unión estrecha (zonulae occludentes), formando la barrera hematotesticular que protege a las células germinales."
+            },
+            {
+                id: 44,
+                category: "Anatomía de la Cabeza",
+                question: "¿Qué hueso del cráneo alberga la estructura anatómica denominada 'silla turca' donde se aloja la glándula hipófisis?",
+                options: {
+                    A: "Hueso frontal",
+                    B: "Hueso etmoides",
+                    C: "Hueso esfenoides",
+                    D: "Hueso temporal",
+                    E: "Hueso occipital"
+                },
+                correct: "C",
+                explanation: "La silla turca se sitúa en la cara superior del cuerpo del hueso esfenoides y alberga la fosa hipofisaria."
+            },
+            {
+                id: 45,
+                category: "Histología del Tejido Óseo",
+                question: "¿Cómo se denominan los conductos vasculares centrales longitudinales que atraviesan las osteonas (sistemas de Havers) en el hueso compacto?",
+                options: {
+                    A: "Conductos de Volkmann (perforantes)",
+                    B: "Conductos de Havers (centrales)",
+                    C: "Canalículos óseos",
+                    D: "Lagunas de Howship",
+                    E: "Laminillas intersticiales"
+                },
+                correct: "B",
+                explanation: "El conducto de Havers es el canal central longitudinal que contiene vasos sanguíneos y nervios en el centro de cada osteona compacta."
+            },
+            {
+                id: 46,
+                category: "Anatomía del Mediastino",
+                question: "¿Qué estructuras anatómicas principales forman el contenido del mediastino posterior?",
+                options: {
+                    A: "El timo y los grandes vasos de la base del corazón",
+                    B: "La tráquea y los bronquios principales",
+                    C: "La aorta torácica descendente, el esófago, el conducto torácico y el sistema de venas ácigos",
+                    D: "El corazón y el saco pericárdico",
+                    E: "Los nervios frénicos exclusivamente"
+                },
+                correct: "C",
+                explanation: "El mediastino posterior se ubica detrás del pericardio y contiene la aorta torácica descendente, el esófago, el conducto torácico, el sistema ácigos y los troncos simpáticos."
+            },
+            {
+                id: 47,
+                category: "Histología del Sistema Inmune",
+                question: "¿Cuál es la principal función inmunológica de la pulpa blanca del bazo?",
+                options: {
+                    A: "Filtrar eritrocitos viejos o defectuosos de la sangre",
+                    B: "Montar respuestas inmunes frente a antígenos transmitidos por la sangre (inmunidad humoral y celular)",
+                    C: "Almacenar plaquetas masivamente",
+                    D: "Producir hormonas eritropoyéticas fetales",
+                    E: "Secretar moco protector esplénico"
+                },
+                correct: "B",
+                explanation: "La pulpa blanca está compuesta por tejido linfoide asociado a la sangre (vainas linfáticas periarteriales y folículos), encargada de la respuesta inmunológica sistémica."
+            },
+            {
+                id: 48,
+                category: "Anatomía del Sistema Nervioso",
+                question: "¿Qué estructura anatómica conecta los dos hemisferios cerebrales facilitando la comunicación interhemisférica?",
+                options: {
+                    A: "El fórnix (trígono)",
+                    B: "El cuerpo calloso",
+                    C: "La comisura anterior",
+                    D: "El quiasma óptico",
+                    E: "La cápsula interna"
+                },
+                correct: "B",
+                explanation: "El cuerpo calloso es la comisura interhemisférica más grande del cerebro, compuesta por fibras blancas que interconectan áreas homólogas y heterólogas de la corteza."
+            },
+            {
+                id: 49,
+                category: "Histología del Sistema Digestivo",
+                question: "¿Qué células epiteliales del intestino delgado son responsables de la absorción de nutrientes y presentan un borde en chapa estriada con microvellosidades?",
+                options: {
+                    A: "Células caliciformes",
+                    B: "Enterocitos (absortivas)",
+                    C: "Células de Paneth",
+                    D: "Células M (membranosas)",
+                    E: "Células enteroendocrinas"
+                },
+                correct: "B",
+                explanation: "Los enterocitos son células cilíndricas absortivas con microvellosidades apicales densas que forman la chapa estriada, optimizando la superficie de absorción intestinal."
+            },
+            {
+                id: 50,
+                category: "Anatomía del Aparato Reproductor Femenino",
+                question: "¿Cuál es el sitio anatómico más frecuente donde ocurre la fecundación del ovocito por el espermatozoide?",
+                options: {
+                    A: "El fondo uterino",
+                    B: "El infundíbulo de la trompa uterina",
+                    C: "La ampolla de la trompa uterina (oviducto)",
+                    D: "El istmo de la trompa",
+                    E: "La cavidad peritoneal del fondo de saco de Douglas"
+                },
+                correct: "C",
+                explanation: "La ampolla es el segmento más ancho y largo de la trompa uterina (de Falopio) y constituye el sitio anatómico donde normalmente tiene lugar la fecundación."
+            }
+        ];
+
+        // Estado global de la aplicación
+        let candidate = { name: "", id: "" };
+        let currentQuestionIndex = 0;
+        let userAnswers = {}; // { 0: 'A', 1: 'C', ... }
+        let timerInterval = null;
+        let secondsElapsed = 0;
+
+        // Referencias del DOM
+        const viewRegister = document.getElementById('view-register');
+        const viewQuiz = document.getElementById('view-quiz');
+        const viewResult = document.getElementById('view-result');
+        const formRegister = document.getElementById('form-register');
+        const userBadge = document.getElementById('user-badge');
+        const badgeName = document.getElementById('badge-name');
+        const currentQNum = document.getElementById('current-q-num');
+        const progressBar = document.getElementById('progress-bar');
+        const answeredCountEl = document.getElementById('answered-count');
+        const questionContainer = document.getElementById('question-container');
+        const questionGrid = document.getElementById('question-grid');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const btnSubmit = document.getElementById('btn-submit');
+        const timerEl = document.getElementById('timer');
+        const modalConfirm = document.getElementById('modal-confirm');
+        const modalAnsweredCount = document.getElementById('modal-answered-count');
+
+        // Registro de usuario y arranque
+        formRegister.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('input-name').value.trim();
+            const idInput = document.getElementById('input-id').value.trim();
+
+            if (!nameInput || !idInput) return;
+
+            candidate.name = nameInput;
+            candidate.id = idInput;
+
+            // Mostrar insignia en el header
+            badgeName.textContent = candidate.name;
+            userBadge.classList.remove('hidden');
+
+            // Cambiar vistas
+            viewRegister.classList.add('hidden');
+            viewQuiz.classList.remove('hidden');
+
+            // Iniciar quiz
+            initQuiz();
+        });
+
+        function initQuiz() {
+            renderQuestionGrid();
+            loadQuestion(0);
+            startTimer();
+        }
+
+        // Temporizador
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                secondsElapsed++;
+                const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+                const secs = (secondsElapsed % 60).toString().padStart(2, '0');
+                timerEl.textContent = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        // Renderizar cuadrícula rápida
+        function renderQuestionGrid() {
+            questionGrid.innerHTML = '';
+            for (let i = 0; i < questionsData.length; i++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.id = `grid-btn-${i}`;
+                btn.textContent = i + 1;
+                btn.className = `h-9 rounded-xl text-xs font-bold transition flex items-center justify-center border ${
+                    userAnswers[i] !== undefined 
+                        ? 'bg-indigo-50 border-indigo-300 text-indigo-700' 
+                        : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                }`;
+                btn.onclick = () => jumpToQuestion(i);
+                questionGrid.appendChild(btn);
+            }
+        }
+
+        function updateGridStatus() {
+            for (let i = 0; i < questionsData.length; i++) {
+                const btn = document.getElementById(`grid-btn-${i}`);
+                if (!btn) continue;
+                
+                if (i === currentQuestionIndex) {
+                    btn.className = `h-9 rounded-xl text-xs font-bold transition flex items-center justify-center border-2 border-indigo-600 bg-indigo-600 text-white shadow-sm`;
+                } else if (userAnswers[i] !== undefined) {
+                    btn.className = `h-9 rounded-xl text-xs font-bold transition flex items-center justify-center border bg-indigo-50 border-indigo-300 text-indigo-700`;
+                } else {
+                    btn.className = `h-9 rounded-xl text-xs font-bold transition flex items-center justify-center border bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100`;
+                }
+            }
+        }
+
+        // Cargar Pregunta actual
+        function loadQuestion(index) {
+            currentQuestionIndex = index;
+            const q = questionsData[index];
+            currentQNum.textContent = index + 1;
+
+            // Actualizar barra de progreso
+            const percent = ((index + 1) / questionsData.length) * 100;
+            progressBar.style.width = `${percent}%`;
+
+            // Actualizar contador respondidas
+            updateAnsweredCount();
+
+            // Construir HTML de la pregunta
+            let htmlOptions = '';
+            const letters = ['A', 'B', 'C', 'D', 'E'];
+            
+            letters.forEach(letter => {
+                const textOpt = q.options[letter];
+                const isSelected = userAnswers[index] === letter;
+                
+                htmlOptions += `
+                    <label class="flex items-start p-4 rounded-xl border transition cursor-pointer select-none ${
+                        isSelected 
+                            ? 'border-indigo-600 bg-indigo-50/60 ring-1 ring-indigo-600 text-indigo-900' 
+                            : 'border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50/50 text-slate-700'
+                    }">
+                        <div class="flex items-center h-5">
+                            <input type="radio" name="question_${index}" value="${letter}" ${isSelected ? 'checked' : ''} 
+                                onchange="selectOption(${index}, '${letter}')" class="w-4 h-4 text-indigo-600 border-slate-300 focus:ring-indigo-500">
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <span class="font-bold mr-1.5">${letter})</span> ${textOpt}
+                        </div>
+                    </label>
+                `;
+            });
+
+            questionContainer.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <span class="inline-block bg-indigo-50 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full border border-indigo-100">
+                        ${q.category}
+                    </span>
+                    <span class="text-xs text-slate-400 font-medium">Reactivo #${index + 1} de 50</span>
+                </div>
+                <h3 class="text-base md:text-lg font-semibold text-slate-900 mb-6 leading-relaxed">
+                    ${q.question}
+                </h3>
+                <div class="space-y-3">
+                    ${htmlOptions}
+                </div>
+            `;
+
+            // Botones Anterior / Siguiente / Enviar
+            btnPrev.disabled = index === 0;
+            if (index === questionsData.length - 1) {
+                btnNext.classList.add('hidden');
+                btnSubmit.classList.remove('hidden');
+            } else {
+                btnNext.classList.remove('hidden');
+                btnSubmit.classList.add('hidden');
+            }
+
+            updateGridStatus();
+        }
+
+        function selectOption(qIndex, letter) {
+            userAnswers[qIndex] = letter;
+            updateAnsweredCount();
+            updateGridStatus();
+            
+            // Refrescar estilos de las opciones visualmente sin recargar todo
+            const labels = questionContainer.querySelectorAll('label');
+            labels.forEach((label, i) => {
+                const ltr = ['A', 'B', 'C', 'D', 'E'][i];
+                if (ltr === letter) {
+                    label.className = "flex items-start p-4 rounded-xl border transition cursor-pointer select-none border-indigo-600 bg-indigo-50/60 ring-1 ring-indigo-600 text-indigo-900";
+                } else {
+                    label.className = "flex items-start p-4 rounded-xl border transition cursor-pointer select-none border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50/50 text-slate-700";
+                }
+            });
+        }
+
+        function updateAnsweredCount() {
+            const count = Object.keys(userAnswers).length;
+            answeredCountEl.textContent = count;
+            modalAnsweredCount.textContent = count;
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questionsData.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+                window.scrollTo({ top: 150, behavior: 'smooth' });
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                loadQuestion(currentQuestionIndex - 1);
+                window.scrollTo({ top: 150, behavior: 'smooth' });
+            }
+        }
+
+        function jumpToQuestion(index) {
+            loadQuestion(index);
+            window.scrollTo({ top: 150, behavior: 'smooth' });
+        }
+
+        function confirmSubmit() {
+            modalConfirm.classList.remove('hidden');
+        }
+
+        function closeSubmitModal() {
+            modalConfirm.classList.add('hidden');
+        }
+
+        // Finalizar y calcular resultados
+        function submitExam() {
+            clearInterval(timerInterval);
+            closeSubmitModal();
+
+            viewQuiz.classList.add('hidden');
+            viewResult.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Calcular puntuación
+            let correctCount = 0;
+            questionsData.forEach((q, i) => {
+                if (userAnswers[i] === q.correct) {
+                    correctCount++;
+                }
+            });
+
+            const percentage = Math.round((correctCount / questionsData.length) * 100);
+            
+            // Llenar datos de resultados
+            document.getElementById('result-candidate-info').textContent = `Participante: ${candidate.name} (ID / Correo: ${candidate.id})`;
+            document.getElementById('score-fraction').textContent = `${correctCount} / 50`;
+            document.getElementById('score-percentage').textContent = `${percentage}%`;
+
+            const qualEl = document.getElementById('score-qualitative');
+            const iconContainer = document.getElementById('result-icon-container');
+
+            if (percentage >= 90) {
+                qualEl.textContent = "Sobresaliente";
+                qualEl.className = "text-xl font-bold mt-1 text-emerald-600";
+                iconContainer.className = "inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-4 text-3xl shadow-lg bg-emerald-50 text-emerald-600 border border-emerald-100";
+                iconContainer.innerHTML = '<i class="fa-solid fa-award"></i>';
+            } else if (percentage >= 75) {
+                qualEl.textContent = "Notable / Aprobado";
+                qualEl.className = "text-xl font-bold mt-1 text-indigo-600";
+                iconContainer.className = "inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-4 text-3xl shadow-lg bg-indigo-50 text-indigo-600 border border-indigo-100";
+                iconContainer.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+            } else if (percentage >= 60) {
+                qualEl.textContent = "Suficiente";
+                qualEl.className = "text-xl font-bold mt-1 text-amber-600";
+                iconContainer.className = "inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-4 text-3xl shadow-lg bg-amber-50 text-amber-600 border border-amber-100";
+                iconContainer.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+            } else {
+                qualEl.textContent = "A repasar conceptos";
+                qualEl.className = "text-xl font-bold mt-1 text-rose-600";
+                iconContainer.className = "inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-4 text-3xl shadow-lg bg-rose-50 text-rose-600 border border-rose-100";
+                iconContainer.innerHTML = '<i class="fa-solid fa-book-medical"></i>';
+            }
+
+            // Generar reporte detallado
+            renderDetailedReview();
+        }
+
+        function renderDetailedReview() {
+            const container = document.getElementById('detailed-review');
+            container.innerHTML = '';
+
+            questionsData.forEach((q, i) => {
+                const userAns = userAnswers[i] || "Sin responder";
+                const isCorrect = userAns === q.correct;
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `p-5 rounded-2xl border ${isCorrect ? 'border-emerald-200 bg-emerald-50/30' : 'border-rose-200 bg-rose-50/30'}`;
+
+                let optionsHtml = '';
+                ['A', 'B', 'C', 'D', 'E'].forEach(letter => {
+                    let badgeStyle = "text-slate-600";
+                    if (letter === q.correct) {
+                        badgeStyle = "font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded";
+                    } else if (letter === userAns && !isCorrect) {
+                        badgeStyle = "font-bold text-rose-700 bg-rose-100 px-1.5 py-0.5 rounded line-through";
+                    }
+                    optionsHtml += `<div class="text-xs py-0.5 ${badgeStyle}"><strong>${letter})</strong> ${q.options[letter]}</div>`;
+                });
+
+                itemDiv.innerHTML = `
+                    <div class="flex items-start justify-between gap-4 mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-7 h-7 rounded-lg font-bold text-xs flex items-center justify-center ${isCorrect ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}">${i + 1}</span>
+                            <span class="text-xs font-semibold text-slate-500">${q.category}</span>
+                        </div>
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-full ${isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                            ${isCorrect ? '<i class="fa-solid fa-check mr-1"></i> Correcta' : '<i class="fa-solid fa-xmark mr-1"></i> Incorrecta (Tu respuesta: ' + userAns + ')'}
+                        </span>
+                    </div>
+                    <p class="text-sm font-semibold text-slate-900 mb-3">${q.question}</p>
+                    <div class="space-y-1 mb-3 pl-2 border-l-2 border-slate-200">
+                        ${optionsHtml}
+                    </div>
+                    <div class="bg-white/80 p-3 rounded-xl border border-slate-200/80 text-xs text-slate-700">
+                        <strong class="text-indigo-900"><i class="fa-solid fa-circle-info mr-1"></i>Explicación clínica/anatómica:</strong> ${q.explanation}
+                    </div>
+                `;
+                container.appendChild(itemDiv);
+            });
+        }
+
+        function restartQuiz() {
+            userAnswers = {};
+            currentQuestionIndex = 0;
+            secondsElapsed = 0;
+            clearInterval(timerInterval);
+            timerEl.textContent = "00:00";
+
+            viewResult.classList.add('hidden');
+            viewRegister.classList.remove('hidden');
+            document.getElementById('input-name').value = '';
+            document.getElementById('input-id').value = '';
+            userBadge.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
